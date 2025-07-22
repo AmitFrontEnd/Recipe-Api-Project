@@ -29,12 +29,10 @@ const AddedRecipe = () => {
 
   return (
     <>
-      <div className="elem-container flex justify-between py-16">
-        <p className="text-2xl">Your Added Recipes</p>
+      <div className="elem-container flex justify-between pb-8">
+        <p className="pb-8 text-2xl">Your Added Recipes</p>
       </div>
-      <div
-        className={`elem-container } grid grid-cols-[repeat(auto-fill,_minmax(270px,_1fr))] justify-center gap-6 py-3 pt-2`}
-      >
+      <main className="elem-container grid grid-cols-[repeat(auto-fill,_minmax(270px,_1fr))] justify-center gap-6 py-3 pt-2">
         {localRecipes.map((item) => {
           return (
             <RecipeCard
@@ -45,7 +43,7 @@ const AddedRecipe = () => {
             />
           );
         })}
-      </div>
+      </main>
     </>
   );
 };

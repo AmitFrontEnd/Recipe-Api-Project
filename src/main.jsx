@@ -8,8 +8,11 @@ import { Toaster } from "sonner";
 import FavouriteRecipe from "./pages/FavouriteRecipe";
 import App from "./App";
 import AddedRecipe from "./pages/AddedRecipe";
+import Auth from "./pages/Auth";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { RecipeProvider } from "./contexts/Recipe";
-
 const router = createBrowserRouter([
   {
     path: "/",
@@ -25,15 +28,39 @@ const router = createBrowserRouter([
       },
       {
         path: "/addrecipe",
-        element: <AddRecipe />,
+        element: (
+          <ProtectedRoute>
+            <AddRecipe />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/favouriterecipes",
-        element: <FavouriteRecipe />,
+        element: (
+          <ProtectedRoute>
+            <FavouriteRecipe />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/addedrecipes",
-        element: <AddedRecipe />,
+        element: (
+          <ProtectedRoute>
+            <AddedRecipe />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/auth",
+        element: <Auth />,
+      },
+      {
+        path: "/forgot-password",
+        element: <ForgotPassword />,
+      },
+      {
+        path: "/reset-password",
+        element: <ResetPassword />,
       },
     ],
   },

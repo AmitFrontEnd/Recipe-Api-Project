@@ -3,9 +3,8 @@ import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
 import RecipeContext from "@/contexts/Recipe";
-import { toast } from "sonner";
 import { motion } from "motion/react";
-const RecipeCard = ({ image, title, id }) => {
+const RecipeCard = ({ image, title, id, onRemove }) => {
   const { favouriteRecipes, addFavourite, removeFavourite } =
     useContext(RecipeContext);
 
@@ -14,35 +13,35 @@ const RecipeCard = ({ image, title, id }) => {
   const toggleFavourite = () => {
     if (isFavourite) {
       removeFavourite(id);
-      toast.error("Recipe removed from favourites !");
+      onRemove?.();
     } else {
       addFavourite(id);
-      toast.success("Recipe successfully added to favourites !");
     }
   };
 
   const navigate = useNavigate();
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0, y: 30, scale: 0.95 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       whileHover={{
         scale: 1.03,
         boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.1)",
       }}
-
       transition={{
         duration: 0.4,
         ease: "easeOut",
       }}
     >
       <Card className="relative min-h-[380px] w-[285px] justify-self-center overflow-hidden rounded-md pt-0 pb-16 sm:min-h-[360px] sm:w-full">
-        <img
-          src={image}
-          loading="lazy"
-          alt=""
-          className="h-52 w-full object-cover"
-        />
+        <figure>
+          <img
+            src={image}
+            loading="lazy"
+            alt={title}
+            className="h-52 w-full object-cover"
+          />
+        </figure>
         <CardHeader>
           <CardTitle className="text-center leading-6">{title}</CardTitle>
         </CardHeader>
@@ -63,7 +62,7 @@ const RecipeCard = ({ image, title, id }) => {
           </Button>
         </CardFooter>
       </Card>
-    </motion.div>
+    </motion.article>
   );
 };
 

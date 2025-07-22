@@ -70,8 +70,6 @@ const formSchema = z.object({
       path: ["image"],
     }),
 });
-import { motion } from "framer-motion";
-
 
 const AddRecipe = () => {
   const [fileSource, setFileSource] = useState("local");
@@ -170,7 +168,7 @@ const AddRecipe = () => {
           reader.onerror = () => reject(new Error("Failed to read file"));
           reader.readAsDataURL(values.image);
         });
-      } catch (error) {
+      } catch  {
         toast.error("Image is not processed please try different image!");
         return;
       }
@@ -185,11 +183,7 @@ const AddRecipe = () => {
       image: imageData,
     };
 
-    addRecipe(data);
-    toast.success("🎉 Recipe added successfully!", {
-      description:
-        "Your recipe is now in the list! You can check it in the selected Area...",
-    });
+    await addRecipe(data);
 
     form.reset({
       recipename: "",
@@ -207,8 +201,7 @@ const AddRecipe = () => {
   };
 
   return (
-    <motion.div
-   className="w-full min-[458px]:px-4 min-[458px]:pb-4">
+    <main className="w-full min-[458px]:px-4 min-[458px]:pb-4">
       <Card className="mx-auto max-w-lg rounded-none min-[458px]:mt-16 min-[458px]:rounded-xl">
         <CardHeader>
           <CardTitle className="text-center text-3xl">Add Recipe</CardTitle>
@@ -363,7 +356,7 @@ const AddRecipe = () => {
               <FormField
                 control={form.control}
                 name="image"
-                render={({ field: { value, onChange } }) => (
+                render={({ field: {onChange } }) => (
                   <FormItem>
                     <FormLabel>Recipe Image</FormLabel>
                     <FormControl>
@@ -425,7 +418,7 @@ const AddRecipe = () => {
           </Form>
         </CardContent>
       </Card>
-    </motion.div>
+    </main>
   );
 };
 

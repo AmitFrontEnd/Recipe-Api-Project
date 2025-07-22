@@ -24,6 +24,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { toast } from "sonner";
 import { MdDeleteForever } from "react-icons/md";
+import { supabase } from "@/supabase";
 
 const RecipeDetail = () => {
   const { favouriteRecipes, addFavourite, removeFavourite, setLocalRecipes } =
@@ -38,21 +39,42 @@ const RecipeDetail = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { localRecipes } = useContext(RecipeContext);
   const [showIsDelete, setShowIsDelete] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const toggleFavourite = () => {
     if (isFavourite) {
       removeFavourite(id);
-      toast.error("Recipe removed from favourites !");
     } else {
       addFavourite(id);
-      toast.success("Recipe successfully added to favourites !");
     }
   };
 
-  const handleDelete = () => {
-    setLocalRecipes((prev) => prev.filter((item) => item.idMeal != id));
-    if (favouriteRecipes.includes(id)) {
-      removeFavourite(id);
+  const handleDelete = async () => {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    if (userError || !user) {
+      toast.error("Please log in to delete a recipe!");
+      console.log("User fetch error:", userError);
+      return;
     }
+    const { error } = await supabase
+      .from("recipes")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.id);
+
+    if (error) {
+      toast.error("Error deleting recipe!");
+      console.log("Delete error:", error);
+      return;
+    }
+    setLocalRecipes((prev) => prev.filter((item) => item.idMeal !== id));
+
+    if (favouriteRecipes.includes(id)) {
+      await removeFavourite(id);
+    }
+
     toast.success("Recipe deleted successfully!");
     navigate("/");
   };
@@ -87,10 +109,7 @@ const RecipeDetail = () => {
         } else {
           setItemData(undefined);
         }
-        
-      } catch (err) {
-        
-      }
+      } catch  {}
     };
 
     getProductDetail();
@@ -129,7 +148,6 @@ const RecipeDetail = () => {
     if (youtubeUrl.includes("watch?v=")) {
       embedUrl = youtubeUrl.replace("watch?v=", "embed/");
     } else if (youtubeUrl.includes("youtu.be")) {
-      
       const newUrl = new URL(youtubeUrl);
       const videoId = newUrl.pathname.split("/")[1];
       embedUrl = `https://www.youtube.com/embed/${videoId}`;
@@ -138,15 +156,14 @@ const RecipeDetail = () => {
 
   return (
     <>
-      <div
-       className="elem-container py-16">
+      <div className="elem-container py-16">
         <p className="text-2xl">Recipe Detail</p>
       </div>
 
-      <div className="mx-auto max-w-4xl space-y-6 pb-4 max-[930px]:px-4">
+      <main className="mx-auto max-w-4xl space-y-6 pb-4 max-[930px]:px-4">
         {itemData ? (
           <>
-            <div className="overflow-hidden">
+            <article className="overflow-hidden">
               <Card>
                 <div
                   className={`shadow-2xl ${
@@ -157,7 +174,7 @@ const RecipeDetail = () => {
                   }}
                   onClick={() => {
                     if (showIsDelete) {
-                      handleDelete();
+                      setIsDeleteDialogOpen(true);
                     } else {
                       navigate(-1);
                     }
@@ -176,12 +193,14 @@ const RecipeDetail = () => {
                   )}
                 </div>
                 <AspectRatio ratio={16 / 9} className="px-6">
-                  <img
-                    src={itemData.strMealThumb}
-                    alt={`${itemData.strMeal} image`}
-                    className="h-full w-full rounded-md object-cover"
-                    loading="lazy"
-                  />
+                  <figure>
+                    <img
+                      src={itemData.strMealThumb}
+                      alt={`${itemData.strMeal} image`}
+                      className="h-full w-full rounded-md object-cover"
+                      loading="lazy"
+                    />
+                  </figure>
                 </AspectRatio>
 
                 <CardHeader>
@@ -196,56 +215,62 @@ const RecipeDetail = () => {
                   </p>
                 </CardContent>
               </Card>
-            </div>
+            </article>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="pl-4 tracking-wider">
-                  Ingredients
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="ml-6 list-disc">
-                  {ingredients.map((ingredient, index) => (
-                    <li key={index}>{ingredient}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="pl-4 tracking-wider">
-                  Instructions
-                </CardTitle>
-                <CardDescription className="mt-2 ml-4 text-justify leading-6">
-                  {id === "53076"
-                    ? "Just " + itemData.strInstructions
-                    : itemData.strInstructions}
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            {itemData.strYoutube && (
+            <section>
               <Card>
                 <CardHeader>
-                  <CardTitle>Watch Video</CardTitle>
+                  <CardTitle className="pl-4 tracking-wider">
+                    Ingredients
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <AspectRatio ratio={16 / 9}>
-                    <iframe
-                      src={embedUrl}
-                      title="YouTube Video"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      allowFullScreen
-                      className="h-full w-full rounded-md"
-                    ></iframe>
-                  </AspectRatio>
+                  <ul className="ml-6 list-disc">
+                    {ingredients.map((ingredient, index) => (
+                      <li key={index}>{ingredient}</li>
+                    ))}
+                  </ul>
                 </CardContent>
               </Card>
+            </section>
+
+            <section>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="pl-4 tracking-wider">
+                    Instructions
+                  </CardTitle>
+                  <CardDescription className="mt-2 ml-4 text-justify leading-6">
+                    {id === "53076"
+                      ? "Just " + itemData.strInstructions
+                      : itemData.strInstructions}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </section>
+            {itemData.strYoutube && (
+              <section>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Watch Video</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <AspectRatio ratio={16 / 9}>
+                      <iframe
+                        src={embedUrl}
+                        title="YouTube Video"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        allowFullScreen
+                        className="h-full w-full rounded-md"
+                      ></iframe>
+                    </AspectRatio>
+                  </CardContent>
+                </Card>
+              </section>
             )}
 
-            <div className="flex justify-between">
+            <section className="flex justify-between">
               <Button className="cursor-pointer" onClick={toggleFavourite}>
                 {!isFavourite ? "Add to Favourite" : "Remove Favourite"}
               </Button>
@@ -276,12 +301,43 @@ const RecipeDetail = () => {
                   </DialogHeader>
                 </DialogContent>
               </Dialog>
-            </div>
+              <Dialog
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+              >
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Confirm Delete</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to delete this recipe? This action
+                      cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="mt-4 flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsDeleteDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        handleDelete();
+                        setIsDeleteDialogOpen(false);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </section>
           </>
         ) : (
           <CardShimmer />
         )}
-      </div>
+      </main>
     </>
   );
 };

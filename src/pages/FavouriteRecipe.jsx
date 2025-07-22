@@ -1,62 +1,72 @@
-import CardShimmer from "@/components/CardShimmer";
-import RecipeCard from "@/components/RecipeCard";
-import RecipeContext from "@/contexts/Recipe";
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { AlertCircleIcon } from "lucide-react";
+import RecipeContext from "@/contexts/Recipe";
+import RecipeCard from "@/components/RecipeCard";
+import CardShimmer from "@/components/CardShimmer";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon } from "lucide-react";
+import axios from "axios";
 
 const FavouriteRecipe = () => {
   const { localRecipes, favouriteRecipes } = useContext(RecipeContext);
-
-  const [apiFavouriteRecipes, setapiFavouriteRecipes] = useState([]);
+  const [allFavouriteData, setAllFavouriteData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const localFavouriteRecipes = localRecipes.filter((recipe) =>
-    favouriteRecipes.includes(recipe.idMeal),
-  );
-
   useEffect(() => {
-    const apiFavouriteIds = favouriteRecipes.filter(
-      (elem) => !elem.includes("local"),
-    );
+    const fetchFavourites = async () => {
+      setIsLoading(true);
+      const localIds = [];
+      localRecipes.forEach((recipe) => {
+        localIds.push(recipe.idMeal);
+      });
 
-    const fetchApiFavourites = async () => {
-      try {
-        let tempRecipeData = [];
-        for (const id of apiFavouriteIds) {
+      const apiIds = [];
+      favouriteRecipes.forEach((id) => {
+        if (!localIds.includes(id)) {
+          apiIds.push(id);
+        }
+      });
+
+      const localFavourites = [];
+      localRecipes.forEach((recipe) => {
+        if (favouriteRecipes.includes(recipe.idMeal)) {
+          localFavourites.push(recipe);
+        }
+      });
+
+      const apiFavourites = [];
+      for (const id of apiIds) {
+        try {
           const response = await axios.get(
             `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`,
           );
           const recipe = response?.data?.meals?.[0];
           if (recipe) {
-            tempRecipeData.push(recipe);
+            apiFavourites.push(recipe);
           }
+        } catch (err) {
+          console.log(`Error fetching API recipe ${id}:`, err);
         }
-        setapiFavouriteRecipes(tempRecipeData);
-      } catch (err) {
-      } finally {
-        setIsLoading(false);
       }
+
+      const combinedFavourites = [];
+      localFavourites.forEach((recipe) => {
+        combinedFavourites.push(recipe);
+      });
+      apiFavourites.forEach((recipe) => {
+        combinedFavourites.push(recipe);
+      });
+
+      setAllFavouriteData(combinedFavourites);
+      setIsLoading(false);
     };
 
-    if (apiFavouriteIds.length > 0) {
-      fetchApiFavourites();
-    } else {
-      setapiFavouriteRecipes([]);
-      setIsLoading(false);
-    }
-  }, [favouriteRecipes]);
-
-  const allFavouriteData = [
-    ...localFavouriteRecipes,
-    ...(apiFavouriteRecipes || []),
-  ];
+    fetchFavourites();
+  }, []);
 
   if (isLoading) {
     return (
-      <div className="elem-container grid grid-cols-[repeat(auto-fill,_minmax(270px,_1fr))] gap-6 py-16">
-        {Array.from({ length: 20 }, (_, idx) => (
+      <div className="elem-container grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] gap-6 py-16">
+        {Array.from({ length: 8 }, (_, idx) => (
           <CardShimmer key={idx} />
         ))}
       </div>
@@ -79,23 +89,24 @@ const FavouriteRecipe = () => {
 
   return (
     <>
-      <div className="elem-container flex justify-between py-16">
-        <p className="text-2xl">Your Favourite Recipes</p>
+      <div className="elem-container flex justify-between pb-8">
+        <p className="pb-8 text-2xl">Your Favourite Recipes</p>
       </div>
-      <div
-        className={`elem-container } grid grid-cols-[repeat(auto-fill,_minmax(270px,_1fr))] justify-center gap-6 py-3 pt-2`}
-      >
-        {allFavouriteData.map((item) => {
-          return (
-            <RecipeCard
-              key={item.idMeal}
-              title={item.strMeal}
-              image={item.strMealThumb}
-              id={item.idMeal}
-            />
-          );
-        })}
-      </div>
+      <main className="elem-container grid grid-cols-[repeat(auto-fill,minmax(270px,1fr))] justify-center gap-6 py-3 pt-2">
+        {allFavouriteData.map((item) => (
+          <RecipeCard
+            key={item.idMeal}
+            title={item.strMeal}
+            image={item.strMealThumb}
+            id={item.idMeal}
+            onRemove={() => {
+              setAllFavouriteData((prev) =>
+                prev.filter((recipe) => recipe.idMeal !== item.idMeal),
+              );
+            }}
+          />
+        ))}
+      </main>
     </>
   );
 };

@@ -4,21 +4,21 @@
 Recipe API Project 🍽️
 
 Welcome to the Recipe API Project, a dynamic and responsive web application built to help food enthusiasts explore, save, and share their favorite recipes! This project integrates TheMealDB API to provide a seamless recipe browsing experience, with features like recipe search, adding custom recipes, favoriting recipes, and a theme toggle for a personalized user experience. Deployed live at recipe-api-project-by-amit.vercel.app, this is my second major project, showcasing my skills in modern frontend development with React, Tailwind CSS, Framer Motion, shadcn, and Context API.
-🚀 Features
 
-Recipe Filter: Filter recipes by cuisine using TheMealDB API, with real-time results displayed in a responsive grid.
-Add Custom Recipes: Users can add their own recipes with details like title, ingredients, instructions, and images, stored in local storage.
-Favorite Recipes: Save favorite recipes from TheMealDB API or custom recipes to a dedicated favorites section, persisted in local storage.
-Recipe Details: View detailed recipe information, including ingredients, instructions, and images, with a clean and intuitive UI.
-Smooth Animations: Page transitions and card hover effects powered by Framer Motion for a polished and engaging user experience.
-Polished UI Components: Beautiful and accessible UI components (buttons, forms, alerts) using shadcn for a modern look and feel.
-Responsive Design: Fully responsive layout that works seamlessly on desktops, tablets, and mobile devices, styled with Tailwind CSS.
-Dark/Light Theme Toggle: Switch between dark and light themes for a comfortable user experience, with theme persistence using local storage.
-Interactive Navigation: Smooth navigation with React Router, featuring a sticky header with menu toggle for mobile devices.
-Context API for State Management: Efficient global state management for recipes, favorites, and theme preferences using React Context.
-Error Handling: User-friendly error messages for failed API calls or invalid inputs, enhancing the user experience.
-Google OAuth Authentication**: Secure user authentication with Supabase and Google Sign-In, featuring a popup flow with loading spinners for a smooth and user-friendly experience.
+## 🚀 Features
 
+- **Recipe Filter**: Filter recipes by cuisine using TheMealDB API, with real-time results displayed in a responsive grid.
+- **Add Custom Recipes**: Users can add their own recipes with details like title, ingredients, instructions, and images, stored in local storage.
+- **Favorite Recipes**: Save favorite recipes from TheMealDB API or custom recipes to a dedicated favorites section, persisted in local storage.
+- **Recipe Details**: View detailed recipe information, including ingredients, instructions, and images, with a clean and intuitive UI.
+- **Smooth Animations**: Page transitions and card hover effects powered by Framer Motion for a polished and engaging user experience.
+- **Polished UI Components**: Beautiful and accessible UI components (buttons, forms, alerts) using shadcn for a modern look and feel.
+- **Responsive Design**: Fully responsive layout that works seamlessly on desktops, tablets, and mobile devices, styled with Tailwind CSS.
+- **Dark/Light Theme Toggle**: Switch between dark and light themes for a comfortable user experience, with theme persistence using local storage.
+- **Interactive Navigation**: Smooth navigation with React Router, featuring a sticky header with menu toggle for mobile devices.
+- **Context API for State Management**: Efficient global state management for recipes, favorites, and theme preferences using React Context.
+- **Error Handling**: User-friendly error messages for failed API calls or invalid inputs, enhancing the user experience.
+- **Google OAuth Authentication**: Secure user authentication with **Supabase** and Google Sign-In, featuring a popup flow with loading spinners for a smooth and user-friendly experience.
 ## 📸 Screenshots
 
 ### 🏠 Home Screen

@@ -46,7 +46,7 @@ const Auth = () => {
 
   const handleSignUp = async (formData) => {
     setIsSignUpLoading(true);
-    const {error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
     });
@@ -82,6 +82,9 @@ const Auth = () => {
     setIsGoogleLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
+      options: {
+        redirectTo: "https://recipe-api-project-by-amit.vercel.app",
+      },
     });
     setIsGoogleLoading(false);
 

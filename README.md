@@ -17,6 +17,7 @@ Dark/Light Theme Toggle: Switch between dark and light themes for a comfortable 
 Interactive Navigation: Smooth navigation with React Router, featuring a sticky header with menu toggle for mobile devices.
 Context API for State Management: Efficient global state management for recipes, favorites, and theme preferences using React Context.
 Error Handling: User-friendly error messages for failed API calls or invalid inputs, enhancing the user experience.
+Google OAuth Authentication**: Secure user authentication with Supabase and Google Sign-In, featuring a popup flow with loading spinners for a smooth and user-friendly experience.
 
 ## 📸 Screenshots
 
@@ -48,6 +49,7 @@ UI Components: shadcn (for buttons, forms, alerts, etc.)
 Animations: Framer Motion (for page transitions and card hover effects)
 State Management: React Context API
 API: TheMealDB API (https://www.themealdb.com/api.php)
+Backend & Authentication**: Supabase (for storing custom recipes and user authentication)
 Storage: Local Storage for persisting custom recipes, favorites, and theme preferences
 Icons: React Icons
 Deployment: Vercel
